@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veris — Dashboard</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f0f0; color: #1a1a1a; font-size: 14px; }
+#login { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: #f0f0f0; }
+#login-box { background: white; padding: 2rem; border-radius: 8px; width: 300px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); }
+#login-box h2 { margin-bottom: 1.5rem; font-size: 16px; font-weight: 600; }
+#login-box input { width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; margin-bottom: 1rem; outline: none; }
+#login-box input:focus { border-color: #999; }
+#login-box button { width: 100%; padding: 8px; background: #1a1a1a; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; }
+#login-box button:hover { background: #333; }
+#login-error { color: #c00; font-size: 12px; margin-top: 0.5rem; display: none; }
+#dashboard { display: none; padding: 2rem; max-width: 900px; margin: 0 auto; }
+#dashboard h1 { font-size: 18px; font-weight: 600; margin-bottom: 0.25rem; }
+#dashboard .subtitle { color: #888; font-size: 12px; margin-bottom: 2rem; }
+.stats-row { display: flex; gap: 1rem; margin-bottom: 2rem; }
+.stat-box { background: white; padding: 1rem 1.5rem; border-radius: 8px; flex: 1; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.stat-box .number { font-size: 28px; font-weight: 600; }
+.stat-box .label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; }
+.conversation { background: white; border-radius: 8px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.conv-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+.conv-name { font-weight: 600; font-size: 15px; }
+.conv-meta { font-size: 11px; color: #888; }
+.conv-summary { font-size: 13px; line-height: 1.6; color: #444; }
+.conv-tags { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
+.tag { background: #f0f0f0; padding: 2px 8px; border-radius: 12px; font-size: 11px; color: #666; }
+.refresh-btn { float: right; padding: 6px 14px; background: white; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; cursor: pointer; }
+.refresh-btn:hover { background: #f5f5f5; }
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div id="login-box">
+    <h2>Veris Dashboard</h2>
+    <input type="password" id="password-input" placeholder="Password" />
+    <button onclick="login()">Enter</button>
+    <p id="login-error">Wrong password.</p>
+  </div>
+</div>
+
+<div id="dashboard">
+  <button class="refresh-btn" onclick="loadData()">Refresh</button>
+  <h1>Veris — Dashboard</h1>
+  <p class="subtitle" id="last-updated"></p>
+  <div class="stats-row">
+    <div class="stat-box"><div class="number" id="total-people">—</div><div class="label">People</div></div>
+    <div class="stat-box"><div class="number" id="total-sessions">—</div><div class="label">Total Sessions</div></div>
+    <div class="stat-box"><div class="number" id="returning">—</div><div class="label">Returned</div></div>
+  </div>
+  <div id="conversations"></div>
+</div>
+
+<script>
+let savedPassword = '';
+
+function login() {
+  const pw = document.getElementById('password-input').value;
+  savedPassword = pw;
+  fetch('/dashboard-data', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password: pw })
+  }).then(r => r.json()).then(data => {
+    if (data.error) {
+      document.getElementById('login-error').style.display = 'block';
+    } else {
+      document.getElementById('login').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      renderDashboard(data.conversations);
+    }
+  });
+}
+
+function loadData() {
+  fetch('/dashboard-data', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password: savedPassword })
+  }).then(r => r.json()).then(data => {
+    if (!data.error) renderDashboard(data.conversations);
+  });
+}
+
+function renderDashboard(conversations) {
+  const total = conversations.length;
+  const totalSessions = conversations.reduce((a, c) => a + (c.sessions || 1), 0);
+  const returning = conversations.filter(c => (c.sessions || 1) > 1).length;
+
+  document.getElementById('total-people').textContent = total;
+  document.getElementById('total-sessions').textContent = totalSessions;
+  document.getElementById('returning').textContent = returning;
+  document.getElementById('last-updated').textContent = 'Last updated ' + new Date().toLocaleTimeString();
+
+  const container = document.getElementById('conversations');
+  container.innerHTML = '';
+
+  conversations.sort((a, b) => (b.last_visit || '').localeCompare(a.last_visit || ''));
+
+  conversations.filter(c => c !== null && c !== undefined).forEach(c => {
+    const name = c.name || 'Unknown';
+    const sessions = c.sessions || 1;
+    const last = c.last_visit || 'unknown';
+    const first = c.first_visit || 'unknown';
+    const summary = c.summary || 'No summary yet.';
+
+    const div = document.createElement('div');
+    div.className = 'conversation';
+    div.innerHTML = `
+      <div class="conv-header">
+        <span class="conv-name">${name.charAt(0).toUpperCase() + name.slice(1)}</span>
+        <span class="conv-meta">Last visit: ${last}</span>
+      </div>
+      <div class="conv-summary">${summary}</div>
+      <div class="conv-tags">
+        <span class="tag">${sessions} session${sessions !== 1 ? 's' : ''}</span>
+        <span class="tag">Since ${first}</span>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+document.getElementById('password-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') login();
+});
+</script>
+</body>
+</html>

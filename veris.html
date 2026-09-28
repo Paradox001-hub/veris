@@ -1,0 +1,168 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Veris</title><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@300;400&display=swap" rel="stylesheet"><style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}:root{--bg:#f7f5f0;--surface:#faf9f6;--text:#1a1814;--muted:#6b6760;--faint:#a09d98;--border:rgba(26,24,20,0.1);--light:rgba(26,24,20,0.06);--accent:#2c2a26}html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-weight:300;-webkit-font-smoothing:antialiased}#name-screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);z-index:10;transition:opacity .6s ease,transform .6s ease;padding:2rem}#name-screen.leaving{opacity:0;transform:translateY(-20px);pointer-events:none}#chat-screen{position:fixed;inset:0;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .6s ease}#chat-screen.visible{opacity:1;pointer-events:all}#closing-screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);z-index:20;opacity:0;pointer-events:none;transition:opacity 1s ease;padding:2rem;text-align:center}#closing-screen.visible{opacity:1;pointer-events:all}.wordmark{font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:400;letter-spacing:.35em;text-transform:uppercase;color:var(--faint)}.opening-note{font-family:'Cormorant Garamond',serif;font-size:15px;font-style:italic;color:var(--muted);text-align:center;margin-bottom:1.5rem;max-width:320px}.name-q{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;font-style:italic;color:var(--text);text-align:center;line-height:1.5;margin:2.5rem 0 1.5rem 0;max-width:380px}.name-form{display:flex;flex-direction:column;align-items:center;gap:1.25rem;width:100%;max-width:300px}#name-input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--border);padding:10px 0;font-family:'Inter',sans-serif;font-size:16px;font-weight:300;color:var(--text);text-align:center;outline:none;transition:border-color .2s}#name-input::placeholder{color:var(--faint)}#name-input:focus{border-bottom-color:var(--muted)}.remember-label{font-family:'Inter',sans-serif;font-size:12px;font-weight:300;color:var(--muted);display:flex;align-items:center;gap:8px;cursor:pointer}#name-btn{background:var(--accent);color:var(--bg);border:none;padding:11px 32px;font-family:'Inter',sans-serif;font-size:12px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:opacity .2s}#name-btn:hover{opacity:.8}.page-links{display:flex;gap:1.5rem;margin-top:1rem}.page-links a{font-family:'Inter',sans-serif;font-size:11px;font-weight:300;color:var(--faint);text-decoration:none;letter-spacing:.05em;transition:color .2s}.page-links a:hover{color:var(--muted)}
+.lang-toggle{display:flex;gap:0;margin-bottom:1rem;border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.lang-btn{font-family:'Inter',sans-serif;font-size:11px;font-weight:400;color:var(--faint);background:transparent;border:none;padding:7px 18px;cursor:pointer;transition:all .2s;letter-spacing:.05em}
+.lang-btn.active{background:var(--accent);color:var(--bg)}
+.lang-btn:hover:not(.active){color:var(--muted)}.chat-header{padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--light);background:var(--surface);flex-shrink:0}.chat-name{font-size:12px;font-weight:300;color:var(--faint);letter-spacing:.05em}#messages{flex:1;overflow-y:auto;padding:2.5rem 2rem;display:flex;flex-direction:column;gap:2rem;background:var(--bg)}#messages::-webkit-scrollbar{width:4px}#messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}.msg{display:flex;flex-direction:column;gap:.35rem;max-width:620px;animation:up .4s ease both}@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}.msg.user{align-self:flex-end;align-items:flex-end}.msg.veris{align-self:flex-start;align-items:flex-start}.msg-label{font-size:10px;font-weight:400;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:0 2px}.msg-text{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:300;line-height:1.8;color:var(--text);white-space:pre-wrap}.msg.user .msg-text{font-family:'Inter',sans-serif;font-size:14px;color:var(--muted);line-height:1.65}.typing-dots{display:flex;gap:5px;padding:6px 2px;align-items:center}.typing-dots span{width:5px;height:5px;border-radius:50%;background:var(--faint);animation:blink 1.4s infinite}.typing-dots span:nth-child(2){animation-delay:.2s}.typing-dots span:nth-child(3){animation-delay:.4s}@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}.input-area{padding:1.25rem 2rem 1.5rem;background:var(--surface);border-top:1px solid var(--light);display:flex;align-items:flex-end;gap:1rem;flex-shrink:0}#user-input{flex:1;background:transparent;border:none;border-bottom:1px solid var(--border);padding:8px 0;font-family:'Inter',sans-serif;font-size:14px;font-weight:300;color:var(--text);outline:none;resize:none;line-height:1.6;max-height:120px;transition:border-color .2s}#user-input::placeholder{color:var(--faint)}#user-input:focus{border-bottom-color:var(--muted)}#send-btn{background:none;border:none;cursor:pointer;padding:6px;color:var(--faint);transition:color .2s;flex-shrink:0}#send-btn:hover{color:var(--text)}#send-btn:disabled{opacity:.3;cursor:default}.err{font-size:12px;color:var(--faint);font-style:italic;padding:4px 2px;align-self:flex-start}.closing-word{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;font-style:italic;color:var(--text);line-height:1.7;max-width:420px;margin-bottom:3rem}.closing-new{font-family:'Inter',sans-serif;font-size:12px;font-weight:300;letter-spacing:.1em;color:var(--faint);cursor:pointer;border:none;background:none;text-transform:uppercase;padding:8px 0;transition:color .2s}.closing-new:hover{color:var(--muted)}</style></head><body>
+<div id="name-screen">
+  <p class="wordmark">Veris</p>
+  <p class="opening-note">This is a space to think out loud. Veris will listen.</p>
+  <p class="name-q">Before we begin.<br>What is your name?</p>
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="lang-en" onclick="setLang('en')">English</button>
+    <button class="lang-btn" id="lang-ar" onclick="setLang('ar')">العربية</button>
+  </div>
+  <div class="name-form">
+    <input type="text" id="name-input" placeholder="Your name" autocomplete="off"/>
+    <label class="remember-label"><input type="checkbox" id="remember-me" checked/> Remember me across conversations</label>
+    <button id="name-btn">Enter</button>
+    <div class="page-links"><a href="/about">About</a><a href="/privacy">Privacy</a></div>
+  </div>
+</div>
+<div id="chat-screen"><div class="chat-header"><span class="wordmark">Veris</span><span class="chat-name" id="name-display"></span></div><div id="messages"></div><div class="input-area"><textarea id="user-input" autocomplete="off" placeholder="Say anything... (say goodbye to end)" rows="1"></textarea><button id="send-btn" title="Send"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10L17 10M11 4l6 6-6 6"/></svg></button></div></div>
+<div id="closing-screen"><p class="wordmark" style="margin-bottom:3rem;">Veris</p><p class="closing-word" id="closing-text">What you found in here was already yours. It always was.</p><button class="closing-new" onclick="startNew()">Begin again</button></div>
+<script>
+const OPENINGS=["There is something already in you that brought you here. I am just here to help you hear it.\n\nWhat is present for you right now?","You did not arrive here by accident. Something in you knew to come.\n\nWhat is it?","I am here. There is no rush. No judgment. Just space for whatever you are carrying.\n\nWhat would you like to begin with?","Whatever you bring here is welcome. All of it.\n\nWhat is most alive in you right now?","There is nothing you can say here that will change how I hold you. I am completely on your side.\n\nWhat do you need to say?","You already carry more wisdom than you know. I am just here to help you find it.\n\nWhat is weighing on you today?"];
+const ARABIC_OPENINGS=[
+  "هناك شيء بداخلك أحضرك إلى هنا. أنا هنا فقط لمساعدتك على سماعه.\n\nما الذي يشغل تفكيرك الآن؟",
+  "لم تصل إلى هنا بالصدفة. شيء بداخلك عرف كيف يأتي.\n\nما هو؟",
+  "أنا هنا. لا تسرع. لا حكم. فقط مساحة لما تحمله.\n\nمن أين تريد أن تبدأ؟",
+  "كل ما تحضره هنا مرحبا به. كله.\n\nما الأكثر حيوية بداخلك الآن؟",
+  "لا يوجد شيء يمكنك قوله هنا يغيّر طريقة احتضاني لك. أنا تماماً في صفك.\n\nماذا تحتاج أن تقوله؟"
+];
+const GOODBYE_TRIGGERS=['goodbye','وداعاً','وداعا','مع السلامة','شكراً','شكرا'];
+const ARABIC_CLOSINGS=[
+  "ما وجدته هنا كان لك دائماً. كان كذلك دوماً.\n\nاذهب بسلام.",
+  "جئت تحمل شيئاً. وتغادر لا تزال تحمله. لكن ربما بطريقة مختلفة قليلاً.\n\nاعتنِ بنفسك.",
+  "الصوت الذي سمعته هنا هو صوتك أنت. تعلّم الثقة به هو العمل الحقيقي.\n\nعد متى تحتاج.",
+  "ما قيل هنا لن يضيع. يعيش بداخلك الآن.\n\nاذهب وكن لطيفاً مع نفسك.",
+  "أنت تعرف أكثر مما تعطي نفسك الفضل. ثق بذلك.\n\nاذهب بسلام."
+];
+const FORGET_TRIGGERS=['please forget me','forget me','delete my memory','erase my memory'];
+const CRISIS_TRIGGERS=['kill myself','end my life','want to die','suicide','self harm','self-harm','hurt myself','cutting myself','dont want to be here','don\'t want to be here','no reason to live','rather be dead'];
+const CRISIS_MESSAGE="What you are carrying right now is beyond what this space can hold. Please reach out to someone who can truly help.\n\nIn the UAE you can call:\nTawazun Psychological Health Hotline: 800-6237\nAvailable 24 hours, Arabic and English\n\nDubai Health Authority Mental Health Helpline: 800-4673\n\nYou do not have to carry this alone.";
+let history=[],userName='',busy=false,conversationEnded=false,currentLanguage='en';
+function isArabic(text){return /[؀-ۿ]/.test(text);}
+function setRTL(on){
+  document.body.style.direction=on?'rtl':'ltr';
+  document.body.style.textAlign=on?'right':'left';
+  document.getElementById('messages').style.direction=on?'rtl':'ltr';
+}
+document.getElementById('user-input').value='';
+function setLang(lang){
+  currentLanguage=lang;
+  const isAr=lang==='ar';
+  setRTL(isAr);
+  document.getElementById('lang-en').classList.toggle('active',!isAr);
+  document.getElementById('lang-ar').classList.toggle('active',isAr);
+  document.getElementById('name-input').placeholder=isAr?'اسمك':'Your name';
+  document.getElementById('name-btn').textContent=isAr?'ابدأ':'Enter';
+  document.querySelector('.opening-note').textContent=isAr?'هذا مكان للتفكير بصوت عالٍ. فيريس سيستمع.':'This is a space to think out loud. Veris will listen.';
+  document.querySelector('.name-q').innerHTML=isAr?'قبل أن نبدأ.<br>ما اسمك؟':'Before we begin.<br>What is your name?';
+  document.querySelector('.remember-label').childNodes[1].textContent=isAr?' تذكّرني عبر المحادثات':' Remember me across conversations';
+  const links=document.querySelectorAll('.page-links a');
+  if(links.length>=2){
+    links[0].textContent=isAr?'عن فيريس':'About';
+    links[1].textContent=isAr?'الخصوصية':'Privacy';
+  }
+}
+function rememberMe(){return document.getElementById('remember-me').checked;}
+function isGoodbye(t){const s=t.toLowerCase().trim();return GOODBYE_TRIGGERS.some(g=>s.includes(g));}
+function isForget(t){const s=t.toLowerCase().trim();return FORGET_TRIGGERS.some(f=>s.includes(f));}
+function isCrisis(t){const s=t.toLowerCase().trim();return CRISIS_TRIGGERS.some(c=>s.includes(c));}
+function showClosingScreen(text){
+  const first=text?text.split('\n\n')[0]:'What you found in here was already yours. It always was.';
+  document.getElementById('closing-text').textContent=first;
+  setTimeout(()=>{
+    const cs=document.getElementById('chat-screen');cs.style.opacity='0';cs.style.pointerEvents='none';
+    document.getElementById('closing-screen').classList.add('visible');
+  },800);
+}
+function startNew(){
+  history=[];userName='';busy=false;conversationEnded=false;
+  document.getElementById('messages').innerHTML='';
+  document.getElementById('name-input').value='';
+  document.getElementById('closing-screen').classList.remove('visible');
+  document.getElementById('chat-screen').style.opacity='0';
+  document.getElementById('chat-screen').style.pointerEvents='none';
+  document.getElementById('chat-screen').classList.remove('visible');
+  document.getElementById('user-input').disabled=false;
+  document.getElementById('user-input').value='';
+  document.getElementById('send-btn').disabled=false;
+  const ns=document.getElementById('name-screen');
+  ns.classList.remove('leaving');ns.style.display='flex';
+  setTimeout(()=>{ns.style.opacity='1';ns.style.transform='none';},50);
+  document.getElementById('name-input').focus();
+}
+function addMsg(role,text){
+  const m=document.getElementById('messages');
+  const g=document.createElement('div');g.className='msg '+role;
+  const l=document.createElement('p');l.className='msg-label';l.textContent=role==='veris'?'Veris':userName;
+  const b=document.createElement('p');b.className='msg-text';b.textContent=text;
+  g.appendChild(l);g.appendChild(b);m.appendChild(g);m.scrollTop=m.scrollHeight;
+}
+function showTyping(){
+  const m=document.getElementById('messages');
+  const g=document.createElement('div');g.className='msg veris';g.id='typing';
+  const l=document.createElement('p');l.className='msg-label';l.textContent='Veris';
+  const d=document.createElement('div');d.className='typing-dots';d.innerHTML='<span></span><span></span><span></span>';
+  g.appendChild(l);g.appendChild(d);m.appendChild(g);m.scrollTop=m.scrollHeight;
+}
+function removeTyping(){const t=document.getElementById('typing');if(t)t.remove();}
+async function send(){
+  const inp=document.getElementById('user-input');
+  const btn=document.getElementById('send-btn');
+  const text=inp.value.trim();
+  if(!text||busy||conversationEnded)return;
+  if(isForget(text)){inp.value='';addMsg('user',text);fetch('/forget',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:userName})});history=[];addMsg('veris','Done. Everything Veris held about you has been removed. This conversation will not be remembered.');busy=false;btn.disabled=false;inp.focus();return;}
+  if(isCrisis(text)){inp.value='';addMsg('user',text);addMsg('veris',CRISIS_MESSAGE);busy=false;btn.disabled=false;inp.focus();return;}
+  if(isGoodbye(text)){inp.value='';addMsg('user',text);if(rememberMe()&&history.length>0){fetch('/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:userName,messages:history})});} const closingPool=currentLanguage==='ar'?ARABIC_CLOSINGS:null;if(closingPool){const msg=closingPool[Math.floor(Math.random()*closingPool.length)];addMsg('veris',msg);setTimeout(()=>showClosingScreen(msg),1500);}else{showClosingScreen();}return;}
+  busy=true;btn.disabled=true;inp.value='';inp.style.height='auto';
+  addMsg('user',text);history.push({role:'user',content:text});showTyping();
+  try{
+    const sendName=rememberMe()?userName:'anonymous';
+    const res=await fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:sendName,messages:history,language:currentLanguage})});
+    const data=await res.json();removeTyping();
+    if(data.error){
+      const m=document.getElementById('messages');const e=document.createElement('p');e.className='err';e.textContent='Something went quiet. '+data.error;m.appendChild(e);
+    } else {
+      history.push({role:'assistant',content:data.reply});addMsg('veris',data.reply);
+      const rl=data.reply.toLowerCase();
+      const isClose=rl.includes('go gently')||rl.includes('take care of yourself')||rl.includes('go and be gentle')||rl.includes('walk back into')||rl.includes('already on the path');
+      if(isClose){
+        conversationEnded=true;inp.disabled=true;btn.disabled=true;
+        if(rememberMe()){fetch('/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:userName,messages:history})});}
+        setTimeout(()=>showClosingScreen(data.reply),1500);
+      }
+    }
+  }catch(e){
+    removeTyping();
+    const m=document.getElementById('messages');const er=document.createElement('p');er.className='err';er.textContent='Could not reach the server. Make sure server.py is running.';m.appendChild(er);
+  }
+  if(!conversationEnded){busy=false;btn.disabled=false;inp.focus();}
+}
+document.getElementById('name-btn').addEventListener('click',()=>{
+  const name=document.getElementById('name-input').value.trim();if(!name)return;
+  userName=name;document.getElementById('name-screen').classList.add('leaving');
+  setTimeout(()=>{
+    document.getElementById('name-screen').style.display='none';
+    document.getElementById('name-display').textContent=userName;
+    const cs=document.getElementById('chat-screen');cs.style.opacity='';cs.style.pointerEvents='';cs.classList.add('visible');
+    const pool=currentLanguage==='ar'?ARABIC_OPENINGS:OPENINGS;const o=pool[Math.floor(Math.random()*pool.length)];
+    history.push({role:'assistant',content:o});addMsg('veris',o);
+    document.getElementById('user-input').value='';
+    document.getElementById('user-input').focus();
+  },600);
+});
+document.getElementById('name-input').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('name-btn').click();});
+document.getElementById('send-btn').addEventListener('click',send);
+document.getElementById('user-input').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}});
+document.getElementById('user-input').addEventListener('input',function(){
+  this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';
+});
+window.addEventListener('beforeunload',function(){
+  if(userName && history.length > 0 && rememberMe()){
+    const data = JSON.stringify({name:userName,messages:history});
+    navigator.sendBeacon('/save', new Blob([data], {type:'application/json'}));
+  }
+});
+</script></body></html>
