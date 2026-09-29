@@ -493,7 +493,7 @@ def main():
     print("Open veris.html in your browser to begin.")
     print("Powered by Anthropic API.")
     print("Press Ctrl+C to stop.\n")
-    server = HTTPServer(("localhost", port), VerisHandler)
+    server = HTTPServer(("0.0.0.0", port), VerisHandler)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
